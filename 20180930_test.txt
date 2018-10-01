@@ -1,0 +1,118 @@
+>>> mnist
+{'DESCR': 'mldata.org dataset: mnist-original', 'COL_NAMES': ['label', 'data'], 'target': array([0., 0., 0., ..., 9., 9., 9.]), 'data': array([[0, 0, 0, ..., 0, 0, 0],
+       [0, 0, 0, ..., 0, 0, 0],
+       [0, 0, 0, ..., 0, 0, 0],
+       ...,
+       [0, 0, 0, ..., 0, 0, 0],
+       [0, 0, 0, ..., 0, 0, 0],
+       [0, 0, 0, ..., 0, 0, 0]], dtype=uint8)}
+>>>
+>>> x, y = mnist['data'], mnist['target']
+>>> x
+array([[0, 0, 0, ..., 0, 0, 0],
+       [0, 0, 0, ..., 0, 0, 0],
+       [0, 0, 0, ..., 0, 0, 0],
+       ...,
+       [0, 0, 0, ..., 0, 0, 0],
+       [0, 0, 0, ..., 0, 0, 0],
+       [0, 0, 0, ..., 0, 0, 0]], dtype=uint8)
+>>> y
+array([0., 0., 0., ..., 9., 9., 9.])
+>>> x.shape
+(70000, 784)
+>>> y.shape
+(70000,)
+
+>>> import matplotlib
+>>> import matplotlib.pyplot as plt
+
+
+/usr/local/lib/python3.7/site-packages/matplotlib/font_manager.py:229: UserWarning: Matplotlib is building the font cache using fc-list. This may take a moment.
+  'Matplotlib is building the font cache using fc-list. '
+
+
+>>>
+>>>
+>>>
+>>>
+>>> some_digit = x[3600]
+>>> some_digit_image = some_digit.reshape(28, 28)
+>>> plt.imshow(some_digit_image, cmap=matplotlib.cm.binary, interpolation='nearest')
+<matplotlib.image.AxesImage object at 0x11c496780>
+>>> plt.axis('off')
+(-0.5, 27.5, 27.5, -0.5)
+>>> plt.show()
+>>> x_train, x_test, y_train, y_test = x[:60000], x[60000:], y[:60000], y[60000:]
+>>> import numpy as np
+>>> shuffle_index = np.random.permutation(60000)
+>>> x_train, y_train = x_train[shuffle_index], y_train[shuffle_index]
+>>> y_train
+array([4., 1., 8., ..., 3., 1., 2.])
+>>> y_train_5 = (y_train == 5)
+>>> y_train_5
+array([False, False, False, ..., False, False, False])
+>>> y_test_5 = (y_test == 5)
+>>> y_test_5
+array([False, False, False, ..., False, False, False])
+>>>
+>>>
+>>> from sklearn.linear_model import SGDClassifier
+>>> sgd_clf = SGDClassifier(random_state=42)
+>>> sgd_clf.fit(x_train, y_train_5)
+/usr/local/lib/python3.7/site-packages/sklearn/linear_model/stochastic_gradient.py:144: FutureWarning: max_iter and tol parameters have been added in SGDClassifier in 0.19. If both are left unset, they default to max_iter=5 and tol=None. If tol is not None, max_iter defaults to max_iter=1000. From 0.21, default max_iter will be 1000, and default tol will be 1e-3.
+  FutureWarning)
+SGDClassifier(alpha=0.0001, average=False, class_weight=None,
+       early_stopping=False, epsilon=0.1, eta0=0.0, fit_intercept=True,
+       l1_ratio=0.15, learning_rate='optimal', loss='hinge', max_iter=None,
+       n_iter=None, n_iter_no_change=5, n_jobs=None, penalty='l2',
+       power_t=0.5, random_state=42, shuffle=True, tol=None,
+       validation_fraction=0.1, verbose=0, warm_start=False)
+>>> sgd_clf.predict([some_digit])
+array([False])
+>>> from sklearn.model_selection import cross_val_score
+>>> cross_val_score(sgd_clf, x_train, y_train_5, cv=3, scoring='accuracy')
+/usr/local/lib/python3.7/site-packages/sklearn/linear_model/stochastic_gradient.py:144: FutureWarning: max_iter and tol parameters have been added in SGDClassifier in 0.19. If both are left unset, they default to max_iter=5 and tol=None. If tol is not None, max_iter defaults to max_iter=1000. From 0.21, default max_iter will be 1000, and default tol will be 1e-3.
+  FutureWarning)
+/usr/local/lib/python3.7/site-packages/sklearn/linear_model/stochastic_gradient.py:144: FutureWarning: max_iter and tol parameters have been added in SGDClassifier in 0.19. If both are left unset, they default to max_iter=5 and tol=None. If tol is not None, max_iter defaults to max_iter=1000. From 0.21, default max_iter will be 1000, and default tol will be 1e-3.
+  FutureWarning)
+/usr/local/lib/python3.7/site-packages/sklearn/linear_model/stochastic_gradient.py:144: FutureWarning: max_iter and tol parameters have been added in SGDClassifier in 0.19. If both are left unset, they default to max_iter=5 and tol=None. If tol is not None, max_iter defaults to max_iter=1000. From 0.21, default max_iter will be 1000, and default tol will be 1e-3.
+  FutureWarning)
+array([0.9631 , 0.8878 , 0.88475])
+>>> from sklearn.model_selection import cross_val_predict
+>>> y_train_pred = cross_val_predict(sgd_clf, x_train, y_train_5, cv=3)
+/usr/local/lib/python3.7/site-packages/sklearn/linear_model/stochastic_gradient.py:144: FutureWarning: max_iter and tol parameters have been added in SGDClassifier in 0.19. If both are left unset, they default to max_iter=5 and tol=None. If tol is not None, max_iter defaults to max_iter=1000. From 0.21, default max_iter will be 1000, and default tol will be 1e-3.
+  FutureWarning)
+/usr/local/lib/python3.7/site-packages/sklearn/linear_model/stochastic_gradient.py:144: FutureWarning: max_iter and tol parameters have been added in SGDClassifier in 0.19. If both are left unset, they default to max_iter=5 and tol=None. If tol is not None, max_iter defaults to max_iter=1000. From 0.21, default max_iter will be 1000, and default tol will be 1e-3.
+  FutureWarning)
+/usr/local/lib/python3.7/site-packages/sklearn/linear_model/stochastic_gradient.py:144: FutureWarning: max_iter and tol parameters have been added in SGDClassifier in 0.19. If both are left unset, they default to max_iter=5 and tol=None. If tol is not None, max_iter defaults to max_iter=1000. From 0.21, default max_iter will be 1000, and default tol will be 1e-3.
+  FutureWarning)
+>>> from sklearn.metrics import confusion_matrix
+>>> confusion_matrix(y_train_5, y_train_pred)
+array([[49830,  4749],
+       [  538,  4883]])
+>>> y_scores = sgd_clf.decision_function([some_digit])
+>>> y_scores
+array([-309054.91088069])
+>>> y_scores = cross_val_predict(sgd_clf, x_train, y_train_5, cv=3, method='decision_function')
+/usr/local/lib/python3.7/site-packages/sklearn/linear_model/stochastic_gradient.py:144: FutureWarning: max_iter and tol parameters have been added in SGDClassifier in 0.19. If both are left unset, they default to max_iter=5 and tol=None. If tol is not None, max_iter defaults to max_iter=1000. From 0.21, default max_iter will be 1000, and default tol will be 1e-3.
+  FutureWarning)
+/usr/local/lib/python3.7/site-packages/sklearn/linear_model/stochastic_gradient.py:144: FutureWarning: max_iter and tol parameters have been added in SGDClassifier in 0.19. If both are left unset, they default to max_iter=5 and tol=None. If tol is not None, max_iter defaults to max_iter=1000. From 0.21, default max_iter will be 1000, and default tol will be 1e-3.
+  FutureWarning)
+/usr/local/lib/python3.7/site-packages/sklearn/linear_model/stochastic_gradient.py:144: FutureWarning: max_iter and tol parameters have been added in SGDClassifier in 0.19. If both are left unset, they default to max_iter=5 and tol=None. If tol is not None, max_iter defaults to max_iter=1000. From 0.21, default max_iter will be 1000, and default tol will be 1e-3.
+  FutureWarning)
+>>> from sklearn.metrics import precision_recall_curve
+>>> def plot_precision_recall_vs_threshold(precisions, recalls, thresholds):
+...     plt.plot(thresholds, precisions[:-1], 'b--', label='Precision')
+...     plt.plot(thresholds, recalls[:-1], 'g-', label='Recall')
+...     plt.xlabel('Threshold')
+...     plt.legend(loc='upper left')
+...     plt.ylim([0, 1])
+...
+>>> precisions, recalls, thresholds = precision_recall_curve(y_train_5, y_scores)
+>>>
+>>>
+>>> plot_precision_recall_vs_threshold(precisions, recalls, thresholds)
+>>> plt.show()
+>>>
+>>>
+>>>
